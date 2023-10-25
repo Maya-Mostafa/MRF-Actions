@@ -1,0 +1,21 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "12.22.10",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.9.1"
+    },
+    "version": "1.17.1",
+    "libraryName": "mrf-actions",
+    "libraryId": "2b3bd858-5709-4062-84a4-14978960787e",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "MRF-Actions",
+    "solutionShortDescription": "MRF-Actions description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

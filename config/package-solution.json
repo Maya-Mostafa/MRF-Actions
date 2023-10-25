@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "mrf-actions-client-side-solution",
+    "id": "2b3bd858-5709-4062-84a4-14978960787e",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.17.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "MRF-Actions description"
+      },
+      "longDescription": {
+        "default": "MRF-Actions description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "mrf-actions Feature",
+        "description": "The feature that activates elements of the mrf-actions solution.",
+        "id": "39e0360d-600e-4f9f-a29b-888324e99c7b",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/mrf-actions.sppkg"
+  }
+}

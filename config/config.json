@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "mrf-actions-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/mrfActions/MrfActionsWebPart.js",
+          "manifest": "./src/webparts/mrfActions/MrfActionsWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "MrfActionsWebPartStrings": "lib/webparts/mrfActions/loc/{locale}.js"
+  }
+}
