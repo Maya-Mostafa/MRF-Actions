@@ -126,10 +126,12 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
 
       if (listViews) {
         listViews.map((result: any)=>{
-          viewsTitle.push({
-            key: result.Title,
-            text: result.Title
-          });
+          if (result.Title !== ''){
+            viewsTitle.push({
+              key: result.Title,
+              text: result.Title
+            });
+          }
         });
         return viewsTitle;
       }
