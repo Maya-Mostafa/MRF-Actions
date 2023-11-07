@@ -32,14 +32,23 @@ export const getLargeListItems = async (context: WebPartContext, siteUrl: string
           id: item.Id,
           title: item.Title,
           created: item.Created,
-          status: item.Title, // item.Status,
-          empName: item.field_1, // item.Employee_x0020_Name,
-          empNum: item.field_2, // item.Employee_x0020_Num,
-          startDate: item.field_3, // item.StartDate,
-          endDate: item.field_4, // item.End_x0020_Date,
-          totalCost: item.field_5, // item.Total_x0020_Cost,
-          approver: item.field_6, // item.Approver,
-          totalKM: item.field_7, // item.Total_x0020_KM
+          status: item.Status, 
+          empName: item.Employee_x0020_Name, 
+          empNum: item.Employee_x0020_Num, 
+          startDate: item.StartDate, 
+          endDate: item.End_x0020_Date, 
+          totalCost: item.Total_x0020_Cost, 
+          approver: item.Approver, 
+          totalKM: item.Total_x0020_KM, 
+
+          // status: item.Title, // item.Status,
+          // empName: item.field_1, // item.Employee_x0020_Name,
+          // empNum: item.field_2, // item.Employee_x0020_Num,
+          // startDate: item.field_3, // item.StartDate,
+          // endDate: item.field_4, // item.End_x0020_Date,
+          // totalCost: item.field_5, // item.Total_x0020_Cost,
+          // approver: item.field_6, // item.Approver,
+          // totalKM: item.field_7, // item.Total_x0020_KM
       }
   });
 
