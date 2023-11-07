@@ -22,7 +22,11 @@
     "description": { "default": "MRF-Actions description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "MRF-Actions"
+      "description": "MRF-Actions",
+      "siteUrl": "https://pdsb1.sharepoint.com/sites/Mileage",
+      "listName": "xlxMRF_test2",
+      "numItems" : "500",
+      "viewName": "All Items"
     }
   }]
 }
