@@ -26,7 +26,8 @@
       "siteUrl": "https://pdsb1.sharepoint.com/sites/Mileage",
       "listName": "xlxMRF_test2",
       "numItems" : "500",
-      "viewName": "All Items"
+      "viewName": "All Items",
+      "statusCol": "Status"
     }
   }]
 }

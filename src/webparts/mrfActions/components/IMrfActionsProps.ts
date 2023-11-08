@@ -11,4 +11,5 @@ export interface IMrfActionsProps {
   siteUrl: string;
   numItems: string;
   viewName: string;
+  statusCol: string;
 }

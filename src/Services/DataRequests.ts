@@ -17,7 +17,7 @@ export const getAllViews = async (context: WebPartContext, siteUrl: string, list
 };
 
 
-export const getLargeListItems = async (context: WebPartContext, siteUrl: string, listName: string, viewName: string,  numItems: string) : Promise <any> => {
+export const getLargeListItems = async (context: WebPartContext, siteUrl: string, listName: string, viewName: string,  numItems: string, statusCol: string) : Promise <any> => {
  
   const sp = spfi(siteUrl).using(SPFx(context));  
 
@@ -32,7 +32,7 @@ export const getLargeListItems = async (context: WebPartContext, siteUrl: string
           id: item.Id,
           title: item.Title,
           created: item.Created,
-          status: item.Status, 
+          status: item[statusCol], 
           empName: item.Employee_x0020_Name, 
           empNum: item.Employee_x0020_Num, 
           startDate: item.StartDate, 
@@ -69,8 +69,8 @@ export const getLargeListItems = async (context: WebPartContext, siteUrl: string
 export const updateListItems = async(context: WebPartContext, siteUrl: string,  listTitle:string, listItems: any, status: string) =>{
   for(const listItem of listItems){
       const restUrl = `${siteUrl}/_api/web/lists/getByTitle('${listTitle}')/items(${listItem.id})`;
-      // const body = JSON.stringify({Status: status});
-      const body = JSON.stringify({Title: status});
+      const body = JSON.stringify({Status: status});
+      //const body = JSON.stringify({Title: status});
 
       const spOptions: ISPHttpClientOptions = {
           headers:{
@@ -92,10 +92,10 @@ export const updateListItems = async(context: WebPartContext, siteUrl: string,  
 };
 
 
-export const updateListItem = async(context: WebPartContext, siteUrl: string,  listTitle:string, listItem: any, status: string) =>{
+export const updateListItem = async(context: WebPartContext, siteUrl: string,  listTitle:string, listItem: any, status: string, statusCol: string) =>{
   const restUrl = `${siteUrl}/_api/web/lists/getByTitle('${listTitle}')/items(${listItem.id})`;
-  // const body = JSON.stringify({Status: status});
-  const body = JSON.stringify({Title: status});
+  const body = JSON.stringify({[statusCol]: status});
+  //const body = JSON.stringify({Title: status});
 
   const spOptions: ISPHttpClientOptions = {
       headers:{

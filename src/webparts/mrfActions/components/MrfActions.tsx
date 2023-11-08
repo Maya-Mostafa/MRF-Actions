@@ -12,6 +12,8 @@ export default function MrfActions(props:IMrfActionsProps){
     context
   } = props;
 
+  const statusColVal = props.statusCol ? props.statusCol : 'Status';
+  console.log("statusColVal", statusColVal);
 
   const [listItems, setListItems] = React.useState([]);
   const [selItems, setSelItems] = React.useState([]);
@@ -20,12 +22,12 @@ export default function MrfActions(props:IMrfActionsProps){
 
   React.useEffect(()=>{
     console.log("React useEffect!");
-    getLargeListItems(context, props.siteUrl, props.listName, props.viewName, props.numItems).then(res => {
+    getLargeListItems(context, props.siteUrl, props.listName, props.viewName, props.numItems, statusColVal).then(res => {
       console.log("all items", res);
       setListItems(res);
     });
 
-    getAllViews(context, props.siteUrl, props.listName).then(res => console.log("alll views of list " + props.listName, res));
+    getAllViews(context, props.siteUrl, props.listName).then(res => console.log("all views of list " + props.listName, res));
 
   }, []);
 
@@ -51,7 +53,7 @@ export default function MrfActions(props:IMrfActionsProps){
     const bulkUpdate = async () => {
       const updateResponseArr = [];
       for(const selItem of selItems){
-        const updateResponse = await updateListItem(context, props.siteUrl, props.listName, selItem, status);
+        const updateResponse = await updateListItem(context, props.siteUrl, props.listName, selItem, status, statusColVal);
         if (updateResponse === 1) setNumItemsUpdated(prev => prev+1);
         updateResponseArr.push(updateResponse);
       }

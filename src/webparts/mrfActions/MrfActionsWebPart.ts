@@ -27,6 +27,7 @@ export interface IMrfActionsWebPartProps {
   numItems: string;
   viewName: string;
   siteUrl: string;
+  statusCol: string;
 }
 
 export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActionsWebPartProps> {
@@ -48,7 +49,8 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
         listName: this.properties.listName,
         numItems: this.properties.numItems,
         viewName: this.properties.viewName,
-        siteUrl: this.properties.siteUrl
+        siteUrl: this.properties.siteUrl,
+        statusCol: this.properties.statusCol
       }
     );
 
@@ -203,6 +205,10 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
                 PropertyPaneTextField('numItems', {
                   label: 'Number of Items',
                   value: this.properties.numItems
+                }),
+                PropertyPaneTextField('statusCol', {
+                  label: 'Status Column',
+                  value: this.properties.statusCol,                  
                 }),
               ]
             }
