@@ -4,6 +4,7 @@ import { IMrfActionsProps } from './IMrfActionsProps';
 import {getLargeListItems, updateListItem, getAllViews} from '../../../Services/DataRequests';
 import { ListView, SelectionMode} from "@pnp/spfx-controls-react/lib/ListView";
 import { Stack, DefaultButton } from '@fluentui/react';
+import { FieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-controls-react/lib/FieldCollectionData';
 
 export default function MrfActions(props:IMrfActionsProps){
 
@@ -13,16 +14,124 @@ export default function MrfActions(props:IMrfActionsProps){
   } = props;
 
   const statusColVal = props.statusCol ? props.statusCol : 'Status';
-  console.log("statusColVal", statusColVal);
+
+  console.log("props.collectionData", props.collectionData);
+
+  const WPtestJSON = [
+    { 
+      "fieldName": "Status",
+      "displayName": "Status Test",
+      "sorting": true,
+      "isResizable": true,
+      "minWidth": 100,
+      "maxWidth": 120,
+      "isDate": false,
+      "isTotalCost": false,
+      "isStatus": true
+    },
+    { 
+      "fieldName": "Employee_x0020_Name",
+      "displayName": "Employee Name",
+      "sorting": true,
+      "isResizable": true,
+      "minWidth": 100,
+      "maxWidth": 140,
+      "isDate": false,
+      "isTotalCost": false,
+      "isStatus": false
+    },
+    { 
+      "fieldName": "Employee_x0020_Num",
+      "displayName": "Employee #",
+      "sorting": true,
+      "isResizable": true,
+      "minWidth": 100,
+      "maxWidth": 120,
+      "isDate": false,
+      "isTotalCost": false,
+      "isStatus": false
+    },
+    { 
+      "fieldName": "StartDate",
+      "displayName": "Start Date",
+      "sorting": true,
+      "isResizable": true,
+      "minWidth": 100,
+      "maxWidth": 120,
+      "isDate": true,
+      "isTotalCost": false,
+      "isStatus": false
+    },
+    { 
+      "fieldName": "End_x0020_Date",
+      "displayName": "End Date",
+      "sorting": true,
+      "isResizable": true,
+      "minWidth": 100,
+      "maxWidth": 120,
+      "isDate": true,
+      "isTotalCost": false,
+      "isStatus": false
+    },
+    { 
+      "fieldName": "Total_x0020_Cost",
+      "displayName": "Total Cost",
+      "sorting": true,
+      "isResizable": true,
+      "minWidth": 100,
+      "maxWidth": 120,
+      "isDate": false,
+      "isTotalCost": true,
+      "isStatus": false
+    },
+    { 
+      "fieldName": "Total_x0020_KM",
+      "displayName": "Total KM",
+      "sorting": true,
+      "isResizable": true,
+      "minWidth": 100,
+      "maxWidth": 120,
+      "isDate": false,
+      "isTotalCost": false,
+      "isStatus": false
+    },
+    { 
+      "fieldName": "Approver",
+      "displayName": "Approver",
+      "sorting": true,
+      "isResizable": true,
+      "minWidth": 100,
+      "maxWidth": 120,
+      "isDate": false,
+      "isTotalCost": false,
+      "isStatus": false
+    },
+    { 
+      "fieldName": "ID",
+      "displayName": "ID",
+      "sorting": true,
+      "isResizable": true,
+      "minWidth": 100,
+      "maxWidth": 100,
+      "isDate": false,
+      "isTotalCost": false,
+      "isStatus": false
+    }
+  ];
+
+  const wpJSONCols = props.columnsJSON ? JSON.parse(JSON.parse(JSON.stringify(props.columnsJSON))) : WPtestJSON;
+  const wpJSONstatusColVal = wpJSONCols ? wpJSONCols.filter((item: any) => item.isStatus)[0].fieldName : "Status";
 
   const [listItems, setListItems] = React.useState([]);
   const [selItems, setSelItems] = React.useState([]);
   const [numItemsUpdated, setNumItemsUpdated] = React.useState(0);
   const [progressVis, setProgressVis] = React.useState(false);
 
+  const [fieldCollectionData, setFieldCollectionDate] = React.useState([{"fieldName": "Status", "displayName": "Status", "minWidth": 50, "maxWidth": 50, "sorting": true, "isResizable": false, "isDate": false, "isTotalCost": false, "isStatus": true}]);
+
   React.useEffect(()=>{
     console.log("React useEffect!");
-    getLargeListItems(context, props.siteUrl, props.listName, props.viewName, props.numItems, statusColVal).then(res => {
+    getLargeListItems(context, props.siteUrl, props.listName, props.viewName, props.numItems, wpJSONstatusColVal).then(res => {
       console.log("all items", res);
       setListItems(res);
     });
@@ -37,31 +146,19 @@ export default function MrfActions(props:IMrfActionsProps){
   };
 
   const updateItemsStatus = (status: string) => {
-    
-    /*updateListItems(context, props.siteUrl, props.listName, selItems, status).then(()=>{
-      const selIds = selItems.map(item => item.id);
-      const newListItems = listItems.map(item => {
-        if (selIds.indexOf(item.id) !== -1){
-          return {...item, status:status}
-        }
-        return item;
-      });
-      setListItems(newListItems);
-    });*/
-
     setProgressVis(true);
     const bulkUpdate = async () => {
       const updateResponseArr = [];
       for(const selItem of selItems){
-        const updateResponse = await updateListItem(context, props.siteUrl, props.listName, selItem, status, statusColVal);
+        const updateResponse = await updateListItem(context, props.siteUrl, props.listName, selItem, status, wpJSONstatusColVal);
         if (updateResponse === 1) setNumItemsUpdated(prev => prev+1);
         updateResponseArr.push(updateResponse);
       }
       Promise.all(updateResponseArr).then(()=>{
-        const selIds = selItems.map(item => item.id);
+        const selIds = selItems.map(item => item.ID);
         const newListItems = listItems.map(item => {
-          if (selIds.indexOf(item.id) !== -1){
-            return {...item, status:status}
+          if (selIds.indexOf(item.ID) !== -1){
+            return {...item, [wpJSONstatusColVal]:status}
           }
           return item;
         });
@@ -72,25 +169,17 @@ export default function MrfActions(props:IMrfActionsProps){
       setProgressVis(false);
       setNumItemsUpdated(0);
     });
-
-    
-    /*for(const selItem of selItems){
-      updateListItem(context, props.siteUrl, props.listName, selItem, status).then(res => {
-        if (res === 1) setNumItemsUpdated(prev => prev+1);
-      });
-    }*/
-
   };
 
   const viewFields = [
 		{
-			name: "status",
+			name: "Status",
 			displayName: "Status",
 			sorting: true,
 			minWidth: 20,
 			maxWidth: 50,
       render: (item: any) =>{
-        switch (item.status){
+        switch (item.Status){
           case 'Not Started':
             return <img width="16px" src="https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/NotStarted.png" alt='Not started' title='Not started' />;
           case 'Completed':
@@ -109,7 +198,7 @@ export default function MrfActions(props:IMrfActionsProps){
       }
 		},
 		{
-			name: "empName",
+			name: "Employee_x0020_Name",
 			displayName: "Employee Name",
 			sorting: true,
 			minWidth: 100,
@@ -117,7 +206,7 @@ export default function MrfActions(props:IMrfActionsProps){
 			isResizable: true,
 		},
 		{
-			name: "empNum",
+			name: "Employee_x0020_Num",
 			displayName: "Employee #",
 			sorting: true,
 			minWidth: 100,
@@ -125,7 +214,7 @@ export default function MrfActions(props:IMrfActionsProps){
 			isResizable: true,
 		},
 		{
-			name: "startDate",
+			name: "StartDate",
 			displayName: "Start Date",
 			sorting: true,
 			minWidth: 100,
@@ -136,7 +225,7 @@ export default function MrfActions(props:IMrfActionsProps){
       }
 		},
 		{
-			name: "endDate",
+			name: "End_x0020_Date",
 			displayName: "End Date",
 			sorting: true,
 			minWidth: 100,
@@ -147,7 +236,7 @@ export default function MrfActions(props:IMrfActionsProps){
       }
 		},
 		{
-			name: "totalCost",
+			name: "Total_x0020_Cost",
 			displayName: "Total Cost",
 			sorting: true,
 			minWidth: 100,
@@ -158,7 +247,7 @@ export default function MrfActions(props:IMrfActionsProps){
       }
 		},
 		{
-			name: "approver",
+			name: "Approver",
 			displayName: "Approver",
 			sorting: true,
 			minWidth: 180,
@@ -166,7 +255,7 @@ export default function MrfActions(props:IMrfActionsProps){
 			isResizable: true,
 		},
 		{
-			name: "totalKM",
+			name: "Total_x0020_KM",
 			displayName: "Total KM",
 			sorting: true,
 			minWidth: 100,
@@ -174,7 +263,7 @@ export default function MrfActions(props:IMrfActionsProps){
 			isResizable: true,
 		},
 		{
-			name: "id",
+			name: "ID",
 			displayName: "ID",
 			sorting: true,
 			minWidth: 100,
@@ -183,13 +272,268 @@ export default function MrfActions(props:IMrfActionsProps){
 		},
   ];
 
+  const customColumns = [
+    { 
+      fieldName: "status",
+      displayName: "Status",
+      sorting: true,
+      isResizable: true,
+      minWidth: 100,
+      maxWidth: 120,
+      isDate: false,
+      isTotalCost: false,
+      isStatus: true,
+    },
+    { 
+      fieldName: "Employee_x0020_Name",
+      displayName: "Employee Name",
+      sorting: true,
+      isResizable: true,
+      minWidth: 100,
+      maxWidth: 140,
+      isDate: false,
+      isTotalCost: false,
+      isStatus: false,
+    },
+    { 
+      fieldName: "Employee_x0020_Num",
+      displayName: "Employee #",
+      sorting: true,
+      isResizable: true,
+      minWidth: 100,
+      maxWidth: 120,
+      isDate: false,
+      isTotalCost: false,
+      isStatus: false,
+    },
+    { 
+      fieldName: "StartDate",
+      displayName: "Start Date",
+      sorting: true,
+      isResizable: true,
+      minWidth: 100,
+      maxWidth: 120,
+      isDate: true,
+      isTotalCost: false,
+      isStatus: false,
+    },
+    { 
+      fieldName: "End_x0020_Date",
+      displayName: "End Date",
+      sorting: true,
+      isResizable: true,
+      minWidth: 100,
+      maxWidth: 120,
+      isDate: true,
+      isTotalCost: false,
+      isStatus: false,
+    },
+    { 
+      fieldName: "Total_x0020_Cost",
+      displayName: "Total Cost",
+      sorting: true,
+      isResizable: true,
+      minWidth: 100,
+      maxWidth: 120,
+      isDate: false,
+      isTotalCost: true,
+      isStatus: false,
+    },
+    { 
+      fieldName: "Total_x0020_KM",
+      displayName: "Total KM",
+      sorting: true,
+      isResizable: true,
+      minWidth: 100,
+      maxWidth: 120,
+      isDate: false,
+      isTotalCost: false,
+      isStatus: false,
+    },
+    { 
+      fieldName: "Approver",
+      displayName: "Approver",
+      sorting: true,
+      isResizable: true,
+      minWidth: 100,
+      maxWidth: 120,
+      isDate: false,
+      isTotalCost: false,
+      isStatus: false,
+    },
+    { 
+      fieldName: "ID",
+      displayName: "ID",
+      sorting: true,
+      isResizable: true,
+      minWidth: 100,
+      maxWidth: 100,
+      isDate: false,
+      isTotalCost: false,
+      isStatus: false,
+    },
+  ];
+  const customViewFields = wpJSONCols.map((col: any) => {
+    if (col.isStatus){
+      return {
+          name: col.fieldName,
+          displayName: col.displayName,
+          sorting: col.sorting,
+          minWidth: col.minWidth,
+          maxWidth: col.maxWidth,
+          render: (item: any) =>{
+            switch (item[col.fieldName]){
+              case 'Not Started':
+                return <img width="16px" src="https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/NotStarted.png" alt='Not started' title='Not started' />;
+              case 'Completed':
+                return <img width="16px" src="https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/Completed.png" alt='Completed' title='Completed' />;
+              case 'Deferred':
+                return <img width="16px" src="https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/deferred.png" alt='Deferred' title='Deferred' />;
+              case 'In Progress':
+                return <img width="16px" src='https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/InProgress.png' alt='In progress' title='In progress' />;
+              case 'Waiting on someone else':
+                return <img width="16px" src='https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/Waiting.png' alt='Waiting on someone else' title='Waiting on someone else' />;
+              case 'Exported':
+                return <img width="16px" src='https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/Exported.png' alt='Exported' title='Exported' />;
+              default:
+                return <img width='16px' src='https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/NotStarted.png' alt='Not started' title='Not started' />
+            }
+          }
+      }
+    }
+    if(col.isDate){
+      return{
+          name: col.fieldName,
+          displayName: col.displayName,
+          sorting: col.sorting,
+          minWidth: col.minWidth,
+          maxWidth: col.maxWidth,
+          isResizable: col.isResizable,
+          render: (item: any) =>{
+            return new Date(item[col.fieldName]).toLocaleDateString();
+          }
+      }
+    }
+    if(col.isTotalCost){
+      return{
+        name: col.fieldName,
+        displayName: col.displayName,
+        sorting: col.sorting,
+        minWidth: col.minWidth,
+        maxWidth: col.maxWidth,
+        isResizable: col.isResizable,
+        render: (item: any) => {
+          return '$' + item[col.fieldName] ;
+        }
+      }
+    }
+    return{
+      name: col.fieldName,
+      displayName: col.displayName,
+      sorting: col.sorting,
+      minWidth: col.minWidth,
+      maxWidth: col.maxWidth,
+      isResizable: col.isResizable,
+    }
+  });
+
+  const fieldCollectionDataViewFields = props.collectionData.map((col: any) => {
+    if (col.isStatus){
+      return {
+          name: col.fieldName,
+          displayName: col.displayName,
+          sorting: col.sorting,
+          minWidth: Number(col.minWidth),
+          maxWidth: Number(col.maxWidth),
+          render: (item: any) =>{
+            switch (item[col.fieldName]){
+              case 'Not Started':
+                return <img width="16px" src="https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/NotStarted.png" alt='Not started' title='Not started' />;
+              case 'Completed':
+                return <img width="16px" src="https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/Completed.png" alt='Completed' title='Completed' />;
+              case 'Deferred':
+                return <img width="16px" src="https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/deferred.png" alt='Deferred' title='Deferred' />;
+              case 'In Progress':
+                return <img width="16px" src='https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/InProgress.png' alt='In progress' title='In progress' />;
+              case 'Waiting on someone else':
+                return <img width="16px" src='https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/Waiting.png' alt='Waiting on someone else' title='Waiting on someone else' />;
+              case 'Exported':
+                return <img width="16px" src='https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/Exported.png' alt='Exported' title='Exported' />;
+              default:
+                return <img width='16px' src='https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/NotStarted.png' alt='Not started' title='Not started' />
+            }
+          }
+      }
+    }
+    if(col.isDate){
+      return{
+          name: col.fieldName,
+          displayName: col.displayName,
+          sorting: col.sorting,
+          minWidth: Number(col.minWidth),
+          maxWidth: Number(col.maxWidth),
+          isResizable: col.isResizable,
+          render: (item: any) =>{
+            return new Date(item[col.fieldName]).toLocaleDateString();
+          }
+      }
+    }
+    if(col.isTotalCost){
+      return{
+        name: col.fieldName,
+        displayName: col.displayName,
+        sorting: col.sorting,
+        minWidth: Number(col.minWidth),
+        maxWidth: Number(col.maxWidth),
+        isResizable: col.isResizable,
+        render: (item: any) => {
+          return '$' + item[col.fieldName] ;
+        }
+      }
+    }
+    return{
+      name: col.fieldName,
+      displayName: col.displayName,
+      sorting: col.sorting,
+      minWidth: Number(col.minWidth),
+      maxWidth: Number(col.maxWidth),
+      isResizable: col.isResizable,
+    }
+  });
+
+
   const percenatge = numItemsUpdated * 100/selItems.length;
 
   let totalCost = 0;
-  listItems.forEach(item => totalCost+= item.totalCost);
+  const totalCostColName = wpJSONCols.filter((item: any) => item.isTotalCost)[0].fieldName;
+  listItems.forEach(item => totalCost+= item[totalCostColName]);
 
   return (
     <div className={`${styles.mrfActions} ${hasTeamsContext ? styles.teams : ''}`} >
+
+      {/* <FieldCollectionData 
+        key={"FieldCollectionData"} 
+        label={"Fields Collection"} 
+        manageBtnLabel={"Manage"} onChanged={(value) => { console.log("fieldcollection", value); setFieldCollectionDate(value) }}
+        panelHeader={"Manage values"}
+        executeFiltering={(searchFilter: string, item: any) => {
+          return item["Field2"] === +searchFilter;
+        }}
+        itemsPerPage={10}
+        enableSorting
+        fields={[
+          {id: "fieldName", title:"Field Name", type: CustomCollectionFieldType.string, required: true},
+          {id: "displayName", title:"Display Name", type: CustomCollectionFieldType.string, required: true},
+          {id: "minWidth", title:"Min Column Width", type: CustomCollectionFieldType.number, required: true},
+          {id: "maxWidth", title:"Max Column Width", type: CustomCollectionFieldType.number, required: true},
+          {id: "sorting", title:"Sorting Column", type: CustomCollectionFieldType.boolean, required: false, defaultValue: true},
+          {id: "isResizable", title:"Resizable Column", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+          {id: "isDate", title:"Date field", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+          {id: "isTotalCost", title:"Total Cost field", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+          {id: "isStatus", title:"Status field", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false}
+        ]}
+        value={fieldCollectionData}
+      /> */}
 
       {progressVis &&
         <>
@@ -212,7 +556,7 @@ export default function MrfActions(props:IMrfActionsProps){
         <div className={styles.selectedItemsCount}>Selected Items: {selItems.length}</div>
         <ListView
           items={listItems}
-          viewFields={viewFields}
+          viewFields={fieldCollectionDataViewFields}
           compact={true}
           selectionMode={SelectionMode.multiple}
           selection={_getSelection}
@@ -229,5 +573,6 @@ export default function MrfActions(props:IMrfActionsProps){
     </div>
   )
 }
+
 
 

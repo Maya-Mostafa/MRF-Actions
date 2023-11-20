@@ -22,11 +22,18 @@ export const getLargeListItems = async (context: WebPartContext, siteUrl: string
   const sp = spfi(siteUrl).using(SPFx(context));  
 
   const listView = await sp.web.lists.getByTitle(listName).views.getByTitle(viewName).select("ViewQuery")();
+  const viewFields = await sp.web.lists.getByTitle(listName).views.getByTitle(viewName).fields.getSchemaXml();
+  
+  //const xml = `<View><ViewFields>${viewFields}<FieldRef Name='FileRef' /><FieldRef Name='FileLeafRef' /></ViewFields><Query>${listView.ViewQuery}</Query><RowLimit>${numItems}</RowLimit></View>`;
   const xml = `<View><Query>${listView.ViewQuery}</Query><RowLimit>${numItems}</RowLimit></View>`;
-  const items = await sp.web.lists.getByTitle(listName).getItemsByCAMLQuery({ViewXml : xml});
+  const items = await sp.web.lists.getByTitle(listName).getItemsByCAMLQuery({ViewXml : xml}, 'FileRef');
 
-  console.log("items", items);
+  console.log("viewFields", viewFields);
+  console.log("items before formate", items);
 
+  return items;
+
+  /*
   return items.map((item: any)=> {
       return {
           id: item.Id,
@@ -51,6 +58,7 @@ export const getLargeListItems = async (context: WebPartContext, siteUrl: string
           // totalKM: item.field_7, // item.Total_x0020_KM
       }
   });
+  */
 
 };
 
@@ -93,7 +101,8 @@ export const updateListItems = async(context: WebPartContext, siteUrl: string,  
 
 
 export const updateListItem = async(context: WebPartContext, siteUrl: string,  listTitle:string, listItem: any, status: string, statusCol: string) =>{
-  const restUrl = `${siteUrl}/_api/web/lists/getByTitle('${listTitle}')/items(${listItem.id})`;
+  console.log("statusCol", statusCol);
+  const restUrl = `${siteUrl}/_api/web/lists/getByTitle('${listTitle}')/items(${listItem.ID})`;
   const body = JSON.stringify({[statusCol]: status});
   //const body = JSON.stringify({Title: status});
 

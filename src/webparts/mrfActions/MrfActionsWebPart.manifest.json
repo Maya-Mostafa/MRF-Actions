@@ -27,7 +27,8 @@
       "listName": "xlxMRF_test2",
       "numItems" : "500",
       "viewName": "All Items",
-      "statusCol": "Status"
+      "statusCol": "Status",
+      "columnsJSON":""
     }
   }]
 }

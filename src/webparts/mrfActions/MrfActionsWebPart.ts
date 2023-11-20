@@ -21,6 +21,10 @@ import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/views";
 
+//import { FieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-controls-react/lib/FieldCollectionData';
+import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
+
+
 export interface IMrfActionsWebPartProps {
   description: string;
   listName: string;
@@ -28,6 +32,8 @@ export interface IMrfActionsWebPartProps {
   viewName: string;
   siteUrl: string;
   statusCol: string;
+  columnsJSON: string;
+  collectionData: any[];
 }
 
 export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActionsWebPartProps> {
@@ -50,7 +56,10 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
         numItems: this.properties.numItems,
         viewName: this.properties.viewName,
         siteUrl: this.properties.siteUrl,
-        statusCol: this.properties.statusCol
+        statusCol: this.properties.statusCol,
+
+        columnsJSON: this.properties.columnsJSON,
+        collectionData: this.properties.collectionData
       }
     );
 
@@ -210,6 +219,32 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
                   label: 'Status Column',
                   value: this.properties.statusCol,                  
                 }),
+
+                PropertyPaneTextField('columnsJSON', {
+                  label: 'Columns JSON',
+                  value: this.properties.columnsJSON,
+                  multiline: true,
+                  rows: 20
+                }),
+                PropertyFieldCollectionData('collectionData', {
+                  key: "collectionData",
+                  label: "Collection data",
+                  panelHeader: "Collection data panel header",
+                  manageBtnLabel: "Manage collection data",
+                  value: this.properties.collectionData,
+                  fields: [
+                    {id: "fieldName", title:"Field Name", type: CustomCollectionFieldType.string, required: true},
+                    {id: "displayName", title:"Display Name", type: CustomCollectionFieldType.string, required: true},
+                    {id: "minWidth", title:"Min Column Width", type: CustomCollectionFieldType.number, required: true},
+                    {id: "maxWidth", title:"Max Column Width", type: CustomCollectionFieldType.number, required: true},
+                    {id: "sorting", title:"Sorting Column", type: CustomCollectionFieldType.boolean, required: false, defaultValue: true},
+                    {id: "isResizable", title:"Resizable Column", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+                    {id: "isDate", title:"Date field", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+                    {id: "isTotalCost", title:"Total Cost field", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+                    {id: "isStatus", title:"Status field", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false}
+                  ],
+                  disabled: false
+                })
               ]
             }
           ]
