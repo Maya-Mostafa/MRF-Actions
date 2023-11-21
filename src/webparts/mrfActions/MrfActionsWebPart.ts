@@ -17,11 +17,12 @@ import MrfActions from './components/MrfActions';
 import { IMrfActionsProps } from './components/IMrfActionsProps';
 
 import { spfi, SPFx } from "@pnp/sp";
+import { IField, IFieldInfo } from "@pnp/sp/fields/types";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/views";
+import "@pnp/sp/fields";
 
-//import { FieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-controls-react/lib/FieldCollectionData';
 import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 
 
@@ -31,8 +32,6 @@ export interface IMrfActionsWebPartProps {
   numItems: string;
   viewName: string;
   siteUrl: string;
-  statusCol: string;
-  columnsJSON: string;
   collectionData: any[];
 }
 
@@ -56,9 +55,6 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
         numItems: this.properties.numItems,
         viewName: this.properties.viewName,
         siteUrl: this.properties.siteUrl,
-        statusCol: this.properties.statusCol,
-
-        columnsJSON: this.properties.columnsJSON,
         collectionData: this.properties.collectionData
       }
     );
@@ -126,6 +122,31 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
     return Version.parse('1.0');
   }
 
+  private colInternalName: any;
+  private async loadListColumns() : Promise<any>{
+    try {
+      const sp = spfi(this.properties.siteUrl).using(SPFx(this.context));  
+      const listFields: any = await sp.web.lists.getByTitle(this.properties.listName).fields();
+
+      console.log("all list fields", listFields);
+
+      return listFields.filter((col: any)=>{
+        // const excludedCols = ['_CheckinComment', '_ColorTag', '_CommentCount', '_ComplianceFlags', '_ComplianceTag', '_ComplianceTagUserId', '_ComplianceTagWrittenTime', '_CopySource', '_DisplayName', '_IsRecord', '_LikeCount', '_UIVersionString', 'Edit', 'Open','DocIcon','FileSizeDisplay','AppAuthor','AppEditor','ComplianceAssetId','ContentType','FolderChildCount','ItemChildCount','LinkFilenameNoMenu','MediaServiceImageTags','ParentLeafName','ParentVersionString'];
+        const excludedCols = [''];
+        //if (col.Hidden || excludedCols.indexOf(col.InternalName) !== -1) return false;
+        return true;
+      }).sort((a:any, b: any) => a.InternalName.localeCompare(b.InternalName)).map((col:any)=>{
+        return {
+          key: col.InternalName,
+          text: col.InternalName
+        }
+      })
+
+    }catch(error){
+      console.log("error", error);
+    }
+  }
+
   /* Loading Dpd with list view names - Start */
   private views: IPropertyPaneDropdownOption[];
   private async loadListViews(): Promise<IPropertyPaneDropdownOption[]> {    
@@ -157,14 +178,20 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
     //   return;
     // }
     this.context.statusRenderer.displayLoadingIndicator(this.domElement, 'views');
-    this.loadListViews()
-      .then((viewOptions: IPropertyPaneDropdownOption[]): void => {
+    this.loadListViews().then((viewOptions: IPropertyPaneDropdownOption[]): void => {
         this.views = viewOptions;
         console.log("this.views", this.views)
         this.context.propertyPane.refresh();
         this.context.statusRenderer.clearLoadingIndicator(this.domElement);        
         this.render();       
-      });
+    });
+    this.loadListColumns().then((results)=>{
+      this.colInternalName = results;
+      this.context.propertyPane.refresh();
+      this.context.statusRenderer.clearLoadingIndicator(this.domElement);        
+      this.render();
+    })
+
   } 
   /*protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): void {
     if (propertyPath === 'listName' && newValue) {
@@ -176,7 +203,7 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
       super.onPropertyPaneFieldChanged(propertyPath, oldValue, oldValue);
     }
   }*/
-  private ButtonClick(oldVal: any): any {   
+  private loadViewsButtonClick(oldVal: any): any {   
     this.context.propertyPane.close();
     this.context.propertyPane.open();
   }  
@@ -204,7 +231,7 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
                 PropertyPaneButton('loadViews',  {  
                   text: "Load Views",  
                   buttonType: PropertyPaneButtonType.Normal,  
-                  onClick: this.ButtonClick.bind(this)  
+                  onClick: this.loadViewsButtonClick.bind(this)  
                 }),  
                 PropertyPaneDropdown('viewName', {
                   label: 'View',
@@ -215,33 +242,25 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
                   label: 'Number of Items',
                   value: this.properties.numItems
                 }),
-                PropertyPaneTextField('statusCol', {
-                  label: 'Status Column',
-                  value: this.properties.statusCol,                  
-                }),
-
-                PropertyPaneTextField('columnsJSON', {
-                  label: 'Columns JSON',
-                  value: this.properties.columnsJSON,
-                  multiline: true,
-                  rows: 20
-                }),
                 PropertyFieldCollectionData('collectionData', {
                   key: "collectionData",
-                  label: "Collection data",
-                  panelHeader: "Collection data panel header",
+                  label: "List View Collection data",
+                  panelHeader: "List View Collection data - Please add the columns required to be displayed",
                   manageBtnLabel: "Manage collection data",
                   value: this.properties.collectionData,
+                  enableSorting: true,
                   fields: [
-                    {id: "fieldName", title:"Field Name", type: CustomCollectionFieldType.string, required: true},
-                    {id: "displayName", title:"Display Name", type: CustomCollectionFieldType.string, required: true},
-                    {id: "minWidth", title:"Min Column Width", type: CustomCollectionFieldType.number, required: true},
-                    {id: "maxWidth", title:"Max Column Width", type: CustomCollectionFieldType.number, required: true},
-                    {id: "sorting", title:"Sorting Column", type: CustomCollectionFieldType.boolean, required: false, defaultValue: true},
-                    {id: "isResizable", title:"Resizable Column", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
-                    {id: "isDate", title:"Date field", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
-                    {id: "isTotalCost", title:"Total Cost field", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
-                    {id: "isStatus", title:"Status field", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false}
+                    {id: "isStatus", title:"Status", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+                    {id: "displayName", title:"Header Display Name", type: CustomCollectionFieldType.string, required: true},
+                    {id: "fieldName", title:"Field (Internal Name)", type: CustomCollectionFieldType.dropdown, options: this.colInternalName, required: true},
+                    {id: "isLink", title:"Hyperlink", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+                    {id: "urlFieldName", title:"Link Field (Internal Name)", type: CustomCollectionFieldType.dropdown, options: this.colInternalName, required: false},
+                    {id: "minWidth", title:"Min Width", type: CustomCollectionFieldType.number, required: true,},
+                    {id: "maxWidth", title:"Max Width", type: CustomCollectionFieldType.number, required: true},
+                    {id: "sorting", title:"Sorting", type: CustomCollectionFieldType.boolean, required: false, defaultValue: true},
+                    {id: "isResizable", title:"Resizable", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+                    {id: "isDate", title:"Date", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+                    {id: "isTotalCost", title:"Total Cost", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
                   ],
                   disabled: false
                 })

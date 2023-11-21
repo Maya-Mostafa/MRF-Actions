@@ -23,12 +23,11 @@
     "officeFabricIconFontName": "Page",
     "properties": {
       "description": "MRF-Actions",
-      "siteUrl": "https://pdsb1.sharepoint.com/sites/Mileage",
-      "listName": "xlxMRF_test2",
+      "siteUrl": "https://pdsb1.sharepoint.com/sites/Mileage/backups",
+      "listName": "MRF",
       "numItems" : "500",
-      "viewName": "All Items",
-      "statusCol": "Status",
-      "columnsJSON":""
+      "viewName": "All Documents",
+      "collectionData": [{"fieldName": "Status", "displayName": "Status", "minWidth": 50, "maxWidth": 50, "sorting": true, "isResizable": false, "isDate": false, "isTotalCost": false, "isStatus": true}]
     }
   }]
 }
