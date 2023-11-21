@@ -17,7 +17,7 @@ export const getAllViews = async (context: WebPartContext, siteUrl: string, list
 };
 
 
-export const getLargeListItems = async (context: WebPartContext, siteUrl: string, listName: string, viewName: string,  numItems: string, statusCol: string) : Promise <any> => {
+export const getLargeListItems = async (context: WebPartContext, siteUrl: string, listName: string, viewName: string,  numItems: string) : Promise <any> => {
  
   const sp = spfi(siteUrl).using(SPFx(context));  
 
