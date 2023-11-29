@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "mrf-actions-client-side-solution",
+    "name": "action-icons-list-client-side-solution",
     "id": "2b3bd858-5709-4062-84a4-14978960787e",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
@@ -16,10 +16,10 @@
     },
     "metadata": {
       "shortDescription": {
-        "default": "MRF-Actions description"
+        "default": "Action-Icons-List description"
       },
       "longDescription": {
-        "default": "MRF-Actions description"
+        "default": "Action-Icons-List description"
       },
       "screenshotPaths": [],
       "videoUrl": "",
@@ -35,6 +35,6 @@
     ]
   },
   "paths": {
-    "zippedPackage": "solution/mrf-actions.sppkg"
+    "zippedPackage": "solution/action-icons-list.sppkg"
   }
 }
