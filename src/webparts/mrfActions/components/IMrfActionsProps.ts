@@ -7,9 +7,17 @@ export interface IMrfActionsProps {
   hasTeamsContext: boolean;
   userDisplayName: string;
   context: WebPartContext;
-  listName: string;
   siteUrl: string;
   numItems: string;
-  viewName: string;
   collectionData: any[];
+
+  list: string ;
+  view: string;
+
+  instructionText: string;
+  showFilter: boolean;
+  filterPlaceholder: string;
+  showSelectedItemsCount: boolean;
+  showItemsCount: boolean;
+  showTotalCost: boolean;
 }

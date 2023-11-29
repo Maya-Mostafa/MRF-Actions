@@ -3,19 +3,13 @@ import styles from './MrfActions.module.scss';
 import { IMrfActionsProps } from './IMrfActionsProps';
 import {getLargeListItems, updateListItem} from '../../../Services/DataRequests';
 import { ListView, SelectionMode} from "@pnp/spfx-controls-react/lib/ListView";
-import { Stack, DefaultButton } from '@fluentui/react';
+import { Stack, DefaultButton, Spinner, MessageBar, MessageBarType } from '@fluentui/react';
 
-export default function MrfActions(props:IMrfActionsProps){
+export default function MrfActions(props:IMrfActionsProps){ 
 
-  const {
-    hasTeamsContext,
-    context
-  } = props;
-
-  console.log("props.collectionData", props.collectionData);
+  console.log("All props", props);
 
   const collectionData = props.collectionData ? props.collectionData : [];
-
   const fieldCollectionDataViewFields = collectionData.length === 0 ? [] : collectionData.map((col: any) => {
     if (col.isStatus){
       return {
@@ -79,7 +73,10 @@ export default function MrfActions(props:IMrfActionsProps){
         maxWidth: Number(col.maxWidth),
         isResizable: col.isResizable,
         render: (item: any) => {
-          return <a target='_blank' rel="noreferrer" data-interception="off" href={item[col.urlFieldName]}>{item[col.fieldName]}</a> ;
+          let itemLink = item[col.urlFieldName];
+          if (col.urlFieldName === 'DisplayForm_Link') itemLink = item.EncodedAbsUrl.substring(0, item.EncodedAbsUrl.lastIndexOf('/')) + "/DispForm.aspx?id=" + item.Id + "&ct=" + item.ContentTypeId;
+          if (col.urlFieldName === 'EditForm_Link') itemLink = item.EncodedAbsUrl.substring(0, item.EncodedAbsUrl.lastIndexOf('/')) + "/EditForm.aspx?id=" + item.Id + "&ct=" + item.ContentTypeId;
+          return <a target='_blank' rel="noreferrer" data-interception="off" href={itemLink}>{item[col.fieldName]}</a> ;
         }
       }
     }
@@ -97,6 +94,8 @@ export default function MrfActions(props:IMrfActionsProps){
   const [selItems, setSelItems] = React.useState([]);
   const [numItemsUpdated, setNumItemsUpdated] = React.useState(0);
   const [progressVis, setProgressVis] = React.useState(false);
+  const [preloaderVisible, setPreloaderVisible] = React.useState(true);
+  const [congifCollectionVisible, setConfigCollectionVisible] = React.useState(true);
 
   const percenatge = numItemsUpdated * 100/selItems.length;
 
@@ -108,10 +107,15 @@ export default function MrfActions(props:IMrfActionsProps){
 
   React.useEffect(()=>{
     if (collectionData.length !== 0){
-      getLargeListItems(context, props.siteUrl, props.listName, props.viewName, props.numItems).then(res => {
+      setPreloaderVisible(true);
+      setConfigCollectionVisible(false);
+      getLargeListItems(props.context, props.siteUrl, props.list, props.view, props.numItems).then(res => {
         console.log("all items", res);
         setListItems(res);
+        setPreloaderVisible(false);
       });
+    }else {
+      setPreloaderVisible(false);
     }
   }, []);
 
@@ -126,7 +130,7 @@ export default function MrfActions(props:IMrfActionsProps){
     const bulkUpdate = async () => {
       const updateResponseArr = [];
       for(const selItem of selItems){
-        const updateResponse = await updateListItem(context, props.siteUrl, props.listName, selItem, status, statusColName);
+        const updateResponse = await updateListItem(props.context, props.siteUrl, props.list, selItem, status, statusColName);
         if (updateResponse === 1) setNumItemsUpdated(prev => prev+1);
         updateResponseArr.push(updateResponse);
       }
@@ -350,7 +354,7 @@ export default function MrfActions(props:IMrfActionsProps){
   ];
 
   return (
-    <div className={`${styles.mrfActions} ${hasTeamsContext ? styles.teams : ''}`} >
+    <div className={`${styles.mrfActions} ${props.hasTeamsContext ? styles.teams : ''}`} >
 
       {progressVis &&
         <>
@@ -362,31 +366,57 @@ export default function MrfActions(props:IMrfActionsProps){
         </>
       }
 
-      <div>Select Item(s) from the below list and mark them as:</div>
-      <Stack className={styles.actionBtns} horizontal wrap tokens={{childrenGap: 15}}>
-        <DefaultButton primary iconProps={{iconName: 'Completed12'}} onClick={()=>updateItemsStatus('Completed')}>Completed</DefaultButton> 
-        <DefaultButton primary iconProps={{iconName: 'ReceiptUndelivered'}} onClick={()=>updateItemsStatus('Pending')}>Pending</DefaultButton> 
-        <DefaultButton primary iconProps={{iconName: 'Clock'}} onClick={()=>updateItemsStatus('Deferred')}>Deferred</DefaultButton>        
-      </Stack>
+      {congifCollectionVisible && 
+        <>
+        <div className={styles.welcome}>
+          <img alt="" src={props.isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
+          <h3>Hi! Please configure the list information from the web part properties and the list columns by clicking on the &ldquo;Manage Data Collection&ldquo; button.</h3>
+        </div>
+        </>
+      }
 
-      <div className={styles.listCntnr}>
-        <div className={styles.selectedItemsCount}>Selected Items: {selItems.length}</div>
-        <ListView
-          items={listItems}
-          viewFields={fieldCollectionDataViewFields}
-          compact={true}
-          selectionMode={SelectionMode.multiple}
-          selection={_getSelection}
-          showFilter={true}
-          defaultFilter=""
-          filterPlaceHolder="Search..."
-          dragDropFiles={true}
-          stickyHeader={true}
-          className={styles.listView}
-        />
-        <div className={styles.itemsCount}>Count: {listItems.length}</div>
-        <div className={styles.totalCost}><b>Total Cost: </b>${totalCost.toLocaleString()}</div>
-      </div>
+      {preloaderVisible &&
+        <Spinner label="Loading data, please wait..." ariaLive="assertive" labelPosition="right" />
+      }
+      {!preloaderVisible && props.collectionData && props.collectionData.length !== 0 &&
+        <div>
+          {listItems.length === 0 ?
+            <MessageBar
+              messageBarType={MessageBarType.warning}
+              isMultiline={false}>
+              Sorry, there is no data to display.
+            </MessageBar>  
+          :
+            <>
+              <div>{props.instructionText}</div>
+              <Stack className={styles.actionBtns} horizontal wrap tokens={{childrenGap: 15}}>
+                <DefaultButton primary iconProps={{iconName: 'Completed12'}} onClick={()=>updateItemsStatus('Completed')}>Completed</DefaultButton> 
+                <DefaultButton primary iconProps={{iconName: 'ReceiptUndelivered'}} onClick={()=>updateItemsStatus('Pending')}>Pending</DefaultButton> 
+                <DefaultButton primary iconProps={{iconName: 'Clock'}} onClick={()=>updateItemsStatus('Deferred')}>Deferred</DefaultButton>        
+              </Stack>
+    
+              <div className={styles.listCntnr}>
+                {props.showSelectedItemsCount && <div className={styles.selectedItemsCount}>Selected Items: {selItems.length}</div>}
+                <ListView
+                  items={listItems}
+                  viewFields={fieldCollectionDataViewFields}
+                  compact={true}
+                  selectionMode={SelectionMode.multiple}
+                  selection={_getSelection}
+                  showFilter={props.showFilter}
+                  defaultFilter=""
+                  filterPlaceHolder={props.filterPlaceholder}
+                  dragDropFiles={false}
+                  stickyHeader={true}
+                  className={styles.listView}          
+                />
+                {props.showItemsCount && <div className={styles.itemsCount}>Count: {listItems.length}</div>}
+                {props.showTotalCost &&<div className={styles.totalCost}><b>Total Cost: </b>${totalCost.toLocaleString()}</div>}
+              </div>
+            </>
+          }
+        </div>
+      }
     </div>
   )
 }

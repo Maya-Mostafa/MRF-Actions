@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
   "id": "0c816abe-b613-480a-8bc2-c26d2645d6f1",
-  "alias": "MrfActionsWebPart",
+  "alias": "ListActionIconsWebPart",
   "componentType": "WebPart",
 
   // The "*" signifies that the version should be taken from the package.json
@@ -18,16 +18,23 @@
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Advanced
     "group": { "default": "Advanced" },
-    "title": { "default": "MRF-Actions" },
-    "description": { "default": "MRF-Actions description" },
+    "title": { "default": "List Action Icons" },
+    "description": { "default": "Action Icons List description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "MRF-Actions",
-      "siteUrl": "https://pdsb1.sharepoint.com/sites/Mileage/backups",
-      "listName": "MRF",
+      "description": "Action Icons List",
+
       "numItems" : "500",
-      "viewName": "All Documents",
-      "collectionData": [{"fieldName": "Status", "displayName": "Status", "minWidth": 50, "maxWidth": 50, "sorting": true, "isResizable": false, "isDate": false, "isTotalCost": false, "isStatus": true}]
+      "siteUrl": "",
+      "list":"",
+      "view":"",
+
+      "instructionText" : "Select Item(s) from the below list and mark them as:",
+      "filterPlaceholder": "Search...",
+      "showFilter" : true,
+      "showSelectedItemsCount": true,
+      "showItemsCount": true,
+      "showTotalCost": true
     }
   }]
 }

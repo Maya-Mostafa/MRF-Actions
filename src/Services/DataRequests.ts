@@ -7,7 +7,6 @@ import "@pnp/sp/items";
 import "@pnp/sp/views";
 import "@pnp/sp/items/get-all";
 import {SPHttpClient, ISPHttpClientOptions} from "@microsoft/sp-http";
- 
 
 export const getAllViews = async (context: WebPartContext, siteUrl: string, listName: string) : Promise <any> => {
   console.log("Function getAllViews --- ");
@@ -17,18 +16,19 @@ export const getAllViews = async (context: WebPartContext, siteUrl: string, list
 };
 
 
-export const getLargeListItems = async (context: WebPartContext, siteUrl: string, listName: string, viewName: string,  numItems: string) : Promise <any> => {
+export const getLargeListItems = async (context: WebPartContext, siteUrl: string, list: string, view: string,  numItems: string) : Promise <any> => {
  
   const sp = spfi(siteUrl).using(SPFx(context));  
 
-  const listView = await sp.web.lists.getByTitle(listName).views.getByTitle(viewName).select("ViewQuery")();
-  const viewFields = await sp.web.lists.getByTitle(listName).views.getByTitle(viewName).fields.getSchemaXml();
+  const listView = await sp.web.lists.getById(list).views.getById(view).select("ViewQuery")();
+  const viewFields = await sp.web.lists.getById(list).views.getById(view).fields.getSchemaXml();
   
   //const xml = `<View><ViewFields>${viewFields}<FieldRef Name='FileRef' /><FieldRef Name='FileLeafRef' /></ViewFields><Query>${listView.ViewQuery}</Query><RowLimit>${numItems}</RowLimit></View>`;
   const xml = `<View><Query>${listView.ViewQuery}</Query><RowLimit>${numItems}</RowLimit></View>`;
-  const items = await sp.web.lists.getByTitle(listName).getItemsByCAMLQuery({ViewXml : xml}, 'FileRef');
+  // const items = await sp.web.lists.getById(list).getItemsByCAMLQuery({ViewXml : xml}, 'FileRef, LinkFilename', 'File', 'Link');
+  const items = await sp.web.lists.getById(list).getItemsByCAMLQuery({ViewXml : xml}, 'FileRef', 'LinkFilename', 'File', 'Link','EncodedAbsUrl','FileLeafRef','FileDirRef','LinkTitle','BaseName','_SourceUrl');
 
-  console.log("viewFields", viewFields);
+  // console.log("viewFields", viewFields);
   console.log("items before formate", items);
 
   return items;
@@ -47,15 +47,6 @@ export const getLargeListItems = async (context: WebPartContext, siteUrl: string
           totalCost: item.Total_x0020_Cost, 
           approver: item.Approver, 
           totalKM: item.Total_x0020_KM, 
-
-          // status: item.Title, // item.Status,
-          // empName: item.field_1, // item.Employee_x0020_Name,
-          // empNum: item.field_2, // item.Employee_x0020_Num,
-          // startDate: item.field_3, // item.StartDate,
-          // endDate: item.field_4, // item.End_x0020_Date,
-          // totalCost: item.field_5, // item.Total_x0020_Cost,
-          // approver: item.field_6, // item.Approver,
-          // totalKM: item.field_7, // item.Total_x0020_KM
       }
   });
   */
@@ -69,9 +60,6 @@ export const getLargeListItems = async (context: WebPartContext, siteUrl: string
   }
   return isEmpty;
 };*/
-
-
-
 
 
 export const updateListItems = async(context: WebPartContext, siteUrl: string,  listTitle:string, listItems: any, status: string) =>{
@@ -100,9 +88,9 @@ export const updateListItems = async(context: WebPartContext, siteUrl: string,  
 };
 
 
-export const updateListItem = async(context: WebPartContext, siteUrl: string,  listTitle:string, listItem: any, status: string, statusCol: string) =>{
+export const updateListItem = async(context: WebPartContext, siteUrl: string,  list:string, listItem: any, status: string, statusCol: string) =>{
   console.log("statusCol", statusCol);
-  const restUrl = `${siteUrl}/_api/web/lists/getByTitle('${listTitle}')/items(${listItem.ID})`;
+  const restUrl = `${siteUrl}/_api/web/lists/getById('${list}')/items(${listItem.ID})`;
   const body = JSON.stringify({[statusCol]: status});
   //const body = JSON.stringify({Title: status});
 
