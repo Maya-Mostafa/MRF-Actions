@@ -43,6 +43,10 @@ export interface IMrfActionsWebPartProps {
   showSelectedItemsCount: boolean;
   showItemsCount: boolean;
   showTotalCost: boolean;
+
+  showRefresh: boolean;
+  refreshText: string;
+  refreshEvery5min: boolean;
 }
 
 export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActionsWebPartProps> {
@@ -74,6 +78,10 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
         showSelectedItemsCount: this.properties.showSelectedItemsCount,
         showItemsCount: this.properties.showItemsCount,
         showTotalCost: this.properties.showTotalCost,
+
+        showRefresh: this.properties.showRefresh,
+        refreshText: this.properties.refreshText,
+        refreshEvery5min: this.properties.refreshEvery5min
 
       }
     );
@@ -342,7 +350,9 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
                   enableSorting: true,
                   panelDescription: "Please make sure to set up all the list data from the web part properties before setting in the columns to be displayed.",
                   fields: [
-                    {id: "isStatus", title:"Status", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+                    {id: "isStatus", title:"Status Icon", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+                    {id: "isEditIcon", title:"Edit Icon", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+                    {id: "isApprovalIcon", title:"Approval Icon", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
                     {id: "displayName", title:"Header Display Name", type: CustomCollectionFieldType.string, required: true},
                     {id: "fieldName", title:"Field (Internal Name)", type: CustomCollectionFieldType.dropdown, options: this.colInternalName, required: true},
                     {id: "isLink", title:"Hyperlink", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
@@ -384,6 +394,18 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
                 PropertyPaneCheckbox('showTotalCost', {
                   text: 'Show Total Cost',
                   checked: this.properties.showTotalCost
+                }),
+                PropertyPaneCheckbox('showRefresh', {
+                  text: 'Show Refresh View',
+                  checked: this.properties.showRefresh
+                }),
+                PropertyPaneTextField('refreshText', {
+                  label: 'Refresh Text',
+                  value: this.properties.refreshText,
+                }),
+                PropertyPaneCheckbox('refreshEvery5min', {
+                  text: 'Refresh View every 5 min',
+                  checked: this.properties.showRefresh
                 }),
               ]
             },

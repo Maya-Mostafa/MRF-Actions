@@ -3,11 +3,12 @@ import styles from './MrfActions.module.scss';
 import { IMrfActionsProps } from './IMrfActionsProps';
 import {getLargeListItems, updateListItem} from '../../../Services/DataRequests';
 import { ListView, SelectionMode} from "@pnp/spfx-controls-react/lib/ListView";
-import { Stack, DefaultButton, Spinner, MessageBar, MessageBarType } from '@fluentui/react';
+import { Stack, DefaultButton, Spinner, MessageBar, MessageBarType, Icon, initializeIcons } from '@fluentui/react';
 
 export default function MrfActions(props:IMrfActionsProps){ 
 
   console.log("All props", props);
+  initializeIcons();
 
   const collectionData = props.collectionData ? props.collectionData : [];
   const fieldCollectionDataViewFields = collectionData.length === 0 ? [] : collectionData.map((col: any) => {
@@ -34,6 +35,72 @@ export default function MrfActions(props:IMrfActionsProps){
                 return <img width="16px" src='https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/Exported.png' alt='Exported' title='Exported' />;
               default:
                 return <img width='16px' src='https://pdsb1.sharepoint.com/sites/My-Site/SiteAssets/icons/Status/NotStarted.png' alt='Not started' title='Not started' />
+            }
+          }
+      }
+    }
+    if (col.isApprovalIcon){
+      return {
+          name: col.fieldName,
+          displayName: col.displayName,
+          sorting: col.sorting,
+          minWidth: Number(col.minWidth),
+          maxWidth: Number(col.maxWidth),
+          render: (item: any) =>{
+            switch (item[col.fieldName]){ 
+              case 'New':
+              case 'Not Started':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/new.svg`)} /><span>Not Started</span></div>;
+              case 'Completed':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/completed.svg`)} /><span>Completed</span></div>;
+              case 'HRSpecialist_inprogress':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/submitted.svg`)} /><span>Pending HR Specialist</span></div>;
+              case 'HRSpecialist_rejected':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/personRejected.svg`)} /><span>Rejected by HR Specialist</span></div>;
+              case 'HRPartner_inprogress':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/submitted.svg`)} /><span>Pending HR Partner</span></div>;
+              case 'HRPartner_rejected':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/personRejected.svg`)} /><span>Rejected by HR Partner</span></div>;
+              case 'HRPartner_approved':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/personAccepted.svg`)} /><span>Approved by HR Partner</span></div>;
+              case 'HRManager_inprogress':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/submitted.svg`)} /><span>Pending HR Manager</span></div>;
+              case 'HRManager_rejected':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/personRejected.svg`)} /><span>Rejected by HR Manager</span></div>;
+              case 'HRExecutive_inprogress':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/submitted.svg`)} /><span>Pending HR Executive</span></div>;
+              case 'HRExecutive_rejected':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/personRejected.svg`)} /><span>Rejected by HR Executive</span></div>;
+              case 'HRExecutive_approved':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/personAccepted.svg`)} /><span>Approved by HR Executive</span></div>;
+              case 'Department_Accepted':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/deptAccepted.svg`)} /><span>Approved by Department</span></div>;
+              case 'Department_Rejected':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/deptRejected.svg`)} /><span>Rejected by Department</span></div>;
+              case 'Pending_Department_Approval':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/deptPending.svg`)} /><span>Pending Department</span></div>;
+              case 'Approver1_Accepted':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/personAccepted.svg`)} /><span>Approved by Approver 1</span></div>;
+              case 'Approver1_Rejected':
+              case 'Employee_Rejected':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/personRejected.svg`)} /><span>Rejected by Approver 1</span></div>;
+              case 'Submitted':
+              case 'Pending_Employee_Approval':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/submitted.svg`)} /><span>Submitted</span></div>;
+              case 'Superintendent_Accepted':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/superAccepted.svg`)} /><span>Approved by Superintendent</span></div>;
+              case 'Pending_Superintendent_Approval':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/superPending.svg`)} /><span>Pending by Superintendent</span></div>;
+              case 'Superintendent_Rejected':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/superRejected.svg`)} /><span>Rejected by Superintendent</span></div>;
+              case 'Collecting_Feedback':
+                return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/collectingFeedback.svg`)} /><span>Collecting Feedback</span></div>;
+              case 'Invalid':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/invalid.svg`)} /><span>Invalid</span></div>;
+              case 'Other':
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/other.svg`)} /><span>Other</span></div>;
+              default:
+                  return <div className={styles.formStatusCol}><img width="20" src={require(`../formIcons/other.svg`)} /><span>Other</span></div>;
             }
           }
       }
@@ -74,9 +141,32 @@ export default function MrfActions(props:IMrfActionsProps){
         isResizable: col.isResizable,
         render: (item: any) => {
           let itemLink = item[col.urlFieldName];
-          if (col.urlFieldName === 'DisplayForm_Link') itemLink = item.EncodedAbsUrl.substring(0, item.EncodedAbsUrl.lastIndexOf('/')) + "/DispForm.aspx?id=" + item.Id + "&ct=" + item.ContentTypeId;
-          if (col.urlFieldName === 'EditForm_Link') itemLink = item.EncodedAbsUrl.substring(0, item.EncodedAbsUrl.lastIndexOf('/')) + "/EditForm.aspx?id=" + item.Id + "&ct=" + item.ContentTypeId;
-          return <a target='_blank' rel="noreferrer" data-interception="off" href={itemLink}>{item[col.fieldName]}</a> ;
+          if (col.urlFieldName === 'DisplayForm_Link') itemLink = item.EncodedAbsUrl.substring(0, item.EncodedAbsUrl.lastIndexOf('/')) + "/DispForm.aspx?ID=" + item.Id + "&ct=" + item.ContentTypeId;
+          if (col.urlFieldName === 'EditForm_Link') itemLink = item.EncodedAbsUrl.substring(0, item.EncodedAbsUrl.lastIndexOf('/')) + "/EditForm.aspx?ID=" + item.Id + "&ct=" + item.ContentTypeId;
+          return (
+            <a target='_blank' rel="noreferrer" data-interception="off" href={itemLink}>
+              {col.isEditIcon 
+                ?
+                <Icon iconName={'Edit'} />              
+                :
+                item[col.fieldName]
+              }
+            </a> 
+          );
+        }
+      }
+    }
+    if(col.fieldName === 'Author'){
+      return{
+        name: col.fieldName,
+        displayName: col.displayName,
+        sorting: col.sorting,
+        minWidth: Number(col.minWidth),
+        maxWidth: Number(col.maxWidth),
+        isResizable: col.isResizable,
+        render: (item: any) =>{
+          // console.log("item author", item);
+          return item['FieldValuesAsText.Author'];
         }
       }
     }
@@ -117,6 +207,9 @@ export default function MrfActions(props:IMrfActionsProps){
     }else {
       setPreloaderVisible(false);
     }
+
+    if (props.refreshEvery5min) setInterval(refreshHandler, 300000);
+
   }, []);
 
   const _getSelection = (items: any[]) =>{
@@ -353,6 +446,15 @@ export default function MrfActions(props:IMrfActionsProps){
     }
   ];
 
+  const refreshHandler = () => {
+    setPreloaderVisible(true);
+    getLargeListItems(props.context, props.siteUrl, props.list, props.view, props.numItems).then(res => {
+      console.log("reloading all items", res);
+      setListItems(res);
+      setPreloaderVisible(false);
+    });
+  };
+
   return (
     <div className={`${styles.mrfActions} ${props.hasTeamsContext ? styles.teams : ''}`} >
 
@@ -388,6 +490,7 @@ export default function MrfActions(props:IMrfActionsProps){
             </MessageBar>  
           :
             <>
+              {props.showRefresh && <a className={styles.refreshBtn} onClick={refreshHandler} href="javascript: void(0)"><Icon iconName='Refresh' />{props.refreshText}</a>}
               <div>{props.instructionText}</div>
               <Stack className={styles.actionBtns} horizontal wrap tokens={{childrenGap: 15}}>
                 <DefaultButton primary iconProps={{iconName: 'Completed12'}} onClick={()=>updateItemsStatus('Completed')}>Completed</DefaultButton> 
@@ -397,19 +500,19 @@ export default function MrfActions(props:IMrfActionsProps){
     
               <div className={styles.listCntnr}>
                 {props.showSelectedItemsCount && <div className={styles.selectedItemsCount}>Selected Items: {selItems.length}</div>}
-                <ListView
-                  items={listItems}
-                  viewFields={fieldCollectionDataViewFields}
-                  compact={true}
-                  selectionMode={SelectionMode.multiple}
-                  selection={_getSelection}
-                  showFilter={props.showFilter}
-                  defaultFilter=""
-                  filterPlaceHolder={props.filterPlaceholder}
-                  dragDropFiles={false}
-                  stickyHeader={true}
-                  className={styles.listView}          
-                />
+                    <ListView
+                      items={listItems}
+                      viewFields={fieldCollectionDataViewFields}
+                      compact={true}
+                      selectionMode={SelectionMode.multiple}
+                      selection={_getSelection}
+                      showFilter={props.showFilter}
+                      defaultFilter=""
+                      filterPlaceHolder={props.filterPlaceholder}
+                      dragDropFiles={false}
+                      stickyHeader={true}
+                      className={styles.listView}          
+                    />
                 {props.showItemsCount && <div className={styles.itemsCount}>Count: {listItems.length}</div>}
                 {props.showTotalCost &&<div className={styles.totalCost}><b>Total Cost: </b>${totalCost.toLocaleString()}</div>}
               </div>

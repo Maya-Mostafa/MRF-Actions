@@ -24,17 +24,19 @@
     "properties": {
       "description": "Action Icons List",
 
-      "numItems" : "500",
-      "siteUrl": "",
-      "list":"",
-      "view":"",
+      "numItems" : "250",
+   
 
       "instructionText" : "Select Item(s) from the below list and mark them as:",
       "filterPlaceholder": "Search...",
       "showFilter" : true,
       "showSelectedItemsCount": true,
       "showItemsCount": true,
-      "showTotalCost": true
+      "showTotalCost": true,
+
+      "showRefresh": true,
+      "refreshText": "Refresh View",
+      "refreshEvery5min": false
     }
   }]
 }

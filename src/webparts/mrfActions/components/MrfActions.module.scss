@@ -84,3 +84,24 @@
     }
   }
 }
+
+.refreshBtn{
+  display: block;
+  float: right;
+  i{
+    margin-right: 7px;
+    font-size: 15px;
+    font-weight: 600;
+    vertical-align: bottom;
+  }
+}
+
+
+.formStatusCol{
+  display: flex;
+  align-content: stretch;
+  align-items: center;
+  span{
+    margin-left: 10px;
+  }
+}
