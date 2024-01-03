@@ -26,7 +26,7 @@ export const getLargeListItems = async (context: WebPartContext, siteUrl: string
   //const xml = `<View><ViewFields>${viewFields}<FieldRef Name='FileRef' /><FieldRef Name='FileLeafRef' /></ViewFields><Query>${listView.ViewQuery}</Query><RowLimit>${numItems}</RowLimit></View>`;
   const xml = `<View><Query>${listView.ViewQuery}</Query><RowLimit>${numItems}</RowLimit></View>`;
   // const items = await sp.web.lists.getById(list).getItemsByCAMLQuery({ViewXml : xml}, 'FileRef, LinkFilename', 'File', 'Link');
-  const items = await sp.web.lists.getById(list).getItemsByCAMLQuery({ViewXml : xml}, 'FileRef', 'LinkFilename', 'File', 'Link','EncodedAbsUrl','FileLeafRef','FileDirRef','LinkTitle','BaseName','_SourceUrl');
+  const items = await sp.web.lists.getById(list).getItemsByCAMLQuery({ViewXml : xml}, 'FileRef', 'LinkFilename', 'File', 'Link','EncodedAbsUrl','FileLeafRef','FileDirRef','LinkTitle','BaseName','_SourceUrl','FieldValuesAsText','Created_x0020_By');
 
   // console.log("viewFields", viewFields);
   console.log("items before formate", items);
