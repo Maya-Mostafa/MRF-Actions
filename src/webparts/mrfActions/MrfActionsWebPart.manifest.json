@@ -33,6 +33,7 @@
       "showSelectedItemsCount": true,
       "showItemsCount": true,
       "showTotalCost": true,
+      "showBtns": true,
 
       "showRefresh": true,
       "refreshText": "Refresh View",

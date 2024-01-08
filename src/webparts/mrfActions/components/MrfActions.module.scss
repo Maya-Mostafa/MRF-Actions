@@ -63,6 +63,7 @@
 }
 .listCntnr{
   position: relative;
+  margin-top: 30px;
   .listView{
     border-bottom: 1px solid #ddd;
     margin-bottom: 10px;
@@ -88,6 +89,7 @@
 .refreshBtn{
   display: block;
   float: right;
+  margin-top: -10px;
   i{
     margin-right: 7px;
     font-size: 15px;

@@ -10,6 +10,8 @@ export default function MrfActions(props:IMrfActionsProps){
   console.log("All props", props);
   initializeIcons();
 
+  const showBtns = props.showBtns === undefined ? true : props.showBtns;
+
   const collectionData = props.collectionData ? props.collectionData : [];
   const fieldCollectionDataViewFields = collectionData.length === 0 ? [] : collectionData.map((col: any) => {
     if (col.isStatus){
@@ -192,7 +194,7 @@ export default function MrfActions(props:IMrfActionsProps){
   let totalCost = 0;
   if (collectionData.length !== 0){
     const totalCostColName = collectionData.filter((item: any) => item.isTotalCost)[0];
-    if (totalCostColName) listItems.forEach(item => totalCost+= item[totalCostColName.fieldName]);
+    if (totalCostColName) listItems.forEach(item => totalCost+= Number(item[totalCostColName.fieldName]));
   }
 
   React.useEffect(()=>{
@@ -482,6 +484,15 @@ export default function MrfActions(props:IMrfActionsProps){
       }
       {!preloaderVisible && props.collectionData && props.collectionData.length !== 0 &&
         <div>
+          {props.showRefresh && <a className={styles.refreshBtn} onClick={refreshHandler} href="javascript: void(0)"><Icon iconName='Refresh' />{props.refreshText}</a>}
+          <div>{props.instructionText}</div>
+          {showBtns &&
+            <Stack className={styles.actionBtns} horizontal wrap tokens={{childrenGap: 15}}>
+              <DefaultButton primary iconProps={{iconName: 'Completed12'}} onClick={()=>updateItemsStatus('Completed')}>Completed</DefaultButton> 
+              <DefaultButton primary iconProps={{iconName: 'ReceiptUndelivered'}} onClick={()=>updateItemsStatus('Pending')}>Pending</DefaultButton> 
+              <DefaultButton primary iconProps={{iconName: 'Clock'}} onClick={()=>updateItemsStatus('Deferred')}>Deferred</DefaultButton>        
+            </Stack>
+          }
           {listItems.length === 0 ?
             <MessageBar
               messageBarType={MessageBarType.warning}
@@ -489,34 +500,24 @@ export default function MrfActions(props:IMrfActionsProps){
               Sorry, there is no data to display.
             </MessageBar>  
           :
-            <>
-              {props.showRefresh && <a className={styles.refreshBtn} onClick={refreshHandler} href="javascript: void(0)"><Icon iconName='Refresh' />{props.refreshText}</a>}
-              <div>{props.instructionText}</div>
-              <Stack className={styles.actionBtns} horizontal wrap tokens={{childrenGap: 15}}>
-                <DefaultButton primary iconProps={{iconName: 'Completed12'}} onClick={()=>updateItemsStatus('Completed')}>Completed</DefaultButton> 
-                <DefaultButton primary iconProps={{iconName: 'ReceiptUndelivered'}} onClick={()=>updateItemsStatus('Pending')}>Pending</DefaultButton> 
-                <DefaultButton primary iconProps={{iconName: 'Clock'}} onClick={()=>updateItemsStatus('Deferred')}>Deferred</DefaultButton>        
-              </Stack>
-    
-              <div className={styles.listCntnr}>
-                {props.showSelectedItemsCount && <div className={styles.selectedItemsCount}>Selected Items: {selItems.length}</div>}
-                    <ListView
-                      items={listItems}
-                      viewFields={fieldCollectionDataViewFields}
-                      compact={true}
-                      selectionMode={SelectionMode.multiple}
-                      selection={_getSelection}
-                      showFilter={props.showFilter}
-                      defaultFilter=""
-                      filterPlaceHolder={props.filterPlaceholder}
-                      dragDropFiles={false}
-                      stickyHeader={true}
-                      className={styles.listView}          
-                    />
-                {props.showItemsCount && <div className={styles.itemsCount}>Count: {listItems.length}</div>}
-                {props.showTotalCost &&<div className={styles.totalCost}><b>Total Cost: </b>${totalCost.toLocaleString()}</div>}
-              </div>
-            </>
+            <div className={styles.listCntnr}>
+              {props.showSelectedItemsCount && <div className={styles.selectedItemsCount}>Selected Items: {selItems.length}</div>}
+                  <ListView
+                    items={listItems}
+                    viewFields={fieldCollectionDataViewFields}
+                    compact={true}
+                    selectionMode={SelectionMode.multiple}
+                    selection={_getSelection}
+                    showFilter={props.showFilter}
+                    defaultFilter=""
+                    filterPlaceHolder={props.filterPlaceholder}
+                    dragDropFiles={false}
+                    stickyHeader={true}
+                    className={styles.listView}          
+                  />
+              {props.showItemsCount && <div className={styles.itemsCount}>Count: {listItems.length}</div>}
+              {props.showTotalCost &&<div className={styles.totalCost}><b>Total Cost: </b>${totalCost.toLocaleString()}</div>}
+            </div>
           }
         </div>
       }

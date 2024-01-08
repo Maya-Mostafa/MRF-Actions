@@ -20,6 +20,7 @@ export interface IMrfActionsProps {
   showSelectedItemsCount: boolean;
   showItemsCount: boolean;
   showTotalCost: boolean;
+  showBtns: boolean;
 
   showRefresh: boolean;
   refreshText: string;

@@ -43,6 +43,7 @@ export interface IMrfActionsWebPartProps {
   showSelectedItemsCount: boolean;
   showItemsCount: boolean;
   showTotalCost: boolean;
+  showBtns: boolean;
 
   showRefresh: boolean;
   refreshText: string;
@@ -78,6 +79,7 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
         showSelectedItemsCount: this.properties.showSelectedItemsCount,
         showItemsCount: this.properties.showItemsCount,
         showTotalCost: this.properties.showTotalCost,
+        showBtns: this.properties.showBtns,
 
         showRefresh: this.properties.showRefresh,
         refreshText: this.properties.refreshText,
@@ -378,6 +380,10 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
                 PropertyPaneTextField('filterPlaceholder', {
                   label: 'Search Placeholder Text',
                   value: this.properties.filterPlaceholder,
+                }),
+                PropertyPaneCheckbox('showBtns', {
+                  text: 'Show Buttons',
+                  checked: this.properties.showBtns
                 }),
                 PropertyPaneCheckbox('showFilter', {
                   text: 'Show Search/Filter',
