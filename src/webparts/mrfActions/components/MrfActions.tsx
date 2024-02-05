@@ -12,7 +12,16 @@ export default function MrfActions(props:IMrfActionsProps){
 
   const showBtns = props.showBtns === undefined ? true : props.showBtns;
 
-  const collectionData = props.collectionData ? props.collectionData : [];
+  const collectionData = props.collectionData 
+    ?
+    props.collectionData.map((item: any) => {
+      return {...item, fieldName: item.fieldName.split('|')[0], fieldType: item.fieldName.split('|')[1]};
+    }) 
+    : 
+    [];
+
+    //console.log("collectionData", collectionData);
+
   const fieldCollectionDataViewFields = collectionData.length === 0 ? [] : collectionData.map((col: any) => {
     if (col.isStatus){
       return {
@@ -179,6 +188,12 @@ export default function MrfActions(props:IMrfActionsProps){
       minWidth: Number(col.minWidth),
       maxWidth: Number(col.maxWidth),
       isResizable: col.isResizable,
+      render: (item:any) => {
+        if (col.fieldType === 'Choice' || col.fieldType === 'Lookup'){
+          return item['FieldValuesAsText.'+[col.fieldName]]
+        }
+        return item[col.fieldName];
+      }
     }
   });
 

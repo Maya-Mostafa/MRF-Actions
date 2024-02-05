@@ -170,8 +170,8 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
 
       return listFields.sort((a:any, b: any) => a.EntityPropertyName.localeCompare(b.EntityPropertyName)).map((col:any)=>{
         return {
-          key: col.EntityPropertyName,
-          text: col.EntityPropertyName
+          key: col.EntityPropertyName +'|'+ col.TypeDisplayName,
+          text: col.EntityPropertyName,
         }
       });
 
@@ -365,6 +365,7 @@ export default class MrfActionsWebPart extends BaseClientSideWebPart<IMrfActions
                     {id: "isResizable", title:"Resizable", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
                     {id: "isDate", title:"Date", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
                     {id: "isTotalCost", title:"Total Cost", type: CustomCollectionFieldType.boolean, required: false, defaultValue: false},
+                    // {id: "fieldType", title: "Field Type", type: CustomCollectionFieldType.string, defaultValue: this.colInternalName}
                   ],
                   disabled: false
                 }),
